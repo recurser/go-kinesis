@@ -1,12 +1,12 @@
 # go-kinesis
-[![Build Status](https://travis-ci.org/sendgridlabs/go-kinesis.png?branch=master)](https://travis-ci.org/sendgridlabs/go-kinesis)
+[![Build Status](https://travis-ci.org/recurser/go-kinesis.png?branch=master)](https://travis-ci.org/recurser/go-kinesis)
 
 GO-lang library for AWS Kinesis API.
 
 ## Documentation
 
-* [Core API](http://godoc.org/github.com/sendgridlabs/go-kinesis)
-* [Batch Producer API](http://godoc.org/github.com/sendgridlabs/go-kinesis/batchproducer)
+* [Core API](http://godoc.org/github.com/recurser/go-kinesis)
+* [Batch Producer API](http://godoc.org/github.com/recurser/go-kinesis/batchproducer)
 
 ## Example
 

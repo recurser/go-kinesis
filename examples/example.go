@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	// kinesis "github.com/sendgridlabs/go-kinesis"
-	kinesis "github.com/sendgridlabs/go-kinesis"
+	// kinesis "github.com/recurser/go-kinesis"
+	kinesis "github.com/recurser/go-kinesis"
 )
 
 func getRecords(ksis kinesis.KinesisClient, streamName, ShardId string) {
