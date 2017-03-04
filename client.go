@@ -5,8 +5,6 @@ import (
 	"time"
 )
 
-const AWSSecurityTokenHeader = "X-Amz-Security-Token"
-
 // Client is like http.Client, but signs all requests using Auth.
 type Client struct {
 	// Auth holds the credentials for this client instance
@@ -43,10 +41,6 @@ func (c *Client) Do(req *http.Request) (*http.Response, error) {
 		if err = c.auth.Renew(); err != nil { // TODO: (see auth.go#Renew) may be slow
 			return nil, err
 		}
-	}
-
-	if c.auth.GetToken() != "" {
-		req.Header.Add(AWSSecurityTokenHeader, c.auth.GetToken())
 	}
 
 	return c.client.Do(req)

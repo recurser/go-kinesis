@@ -16,7 +16,6 @@ const (
 	AccessEnvKeyId      = "AWS_ACCESS_KEY_ID"
 	SecretEnvKey        = "AWS_SECRET_KEY"
 	SecretEnvAccessKey  = "AWS_SECRET_ACCESS_KEY"
-	SecurityTokenEnvKey = "AWS_SECURITY_TOKEN"
 
 	AWSMetadataServer = "169.254.169.254"
 	AWSIAMCredsPath   = "/latest/meta-data/iam/security-credentials"
@@ -25,7 +24,6 @@ const (
 
 // Auth interface for authentication credentials and information
 type Auth interface {
-	GetToken() string
 	GetExpiration() time.Time
 	GetSecretKey() string
 	GetAccessKey() string
@@ -37,7 +35,7 @@ type Auth interface {
 // AuthCredentials holds the AWS credentials and metadata
 type AuthCredentials struct {
 	// accessKey, secretKey are the standard AWS auth credentials
-	accessKey, secretKey, token string
+	accessKey, secretKey string
 
 	// expiry indicates the time at which these credentials expire. If this is set
 	// to anything other than the zero value, indicates that the credentials are
@@ -47,11 +45,10 @@ type AuthCredentials struct {
 
 // NewAuth creates a *AuthCredentials struct that adheres to the Auth interface to
 // dynamically retrieve AWS credentials
-func NewAuth(accessKey, secretKey, token string) *AuthCredentials {
+func NewAuth(accessKey string, secretKey string) *AuthCredentials {
 	return &AuthCredentials{
 		accessKey: accessKey,
 		secretKey: secretKey,
-		token:     token,
 	}
 }
 
@@ -67,19 +64,14 @@ func NewAuthFromEnv() (*AuthCredentials, error) {
 		secretKey = os.Getenv(SecretEnvAccessKey)
 	}
 
-	token := os.Getenv(SecurityTokenEnvKey)
-
 	if accessKey == "" {
 		return nil, fmt.Errorf("Unable to retrieve access key from %s or %s env variables", AccessEnvKey, AccessEnvKeyId)
 	}
 	if secretKey == "" {
 		return nil, fmt.Errorf("Unable to retrieve secret key from %s or %s env variables", SecretEnvKey, SecretEnvAccessKey)
 	}
-	if token == "" {
-		return nil, fmt.Errorf("Unable to retrieve security token from %s env variable", SecurityTokenEnvKey)
-	}
 
-	return NewAuth(accessKey, secretKey, token), nil
+	return NewAuth(accessKey, secretKey), nil
 }
 
 // NewAuthFromMetadata retrieves auth credentials from the metadata
@@ -104,11 +96,6 @@ func (a *AuthCredentials) HasExpiration() bool {
 // GetExpiration retrieves the current expiration time
 func (a *AuthCredentials) GetExpiration() time.Time {
 	return a.expiry
-}
-
-// GetToken returns the token
-func (a *AuthCredentials) GetToken() string {
-	return a.token
 }
 
 // GetSecretKey returns the secret key
@@ -140,7 +127,6 @@ func (a *AuthCredentials) Renew() error {
 	a.expiry = expiry
 	a.accessKey = data["AccessKeyId"]
 	a.secretKey = data["SecretAccessKey"]
-	a.token = data["Token"]
 	return nil
 }
 
